@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   defaultPolicy,
+  createPolicy,
   evaluateTarget,
   isBlockedAddress,
   KITE_TESTNET_PIEUSD,
@@ -124,4 +125,29 @@ test("returns a closed decision when DNS resolution fails", async () => {
   );
   assert.equal(result.allowed, false);
   assert.ok(result.findings.some((item) => item.code === "DNS_FAILURE"));
+});
+
+test("enforces operator host allowlists and denylists", async () => {
+  const allowed = await evaluateTarget(
+    { url: targetUrl, challenge: challenge() },
+    createPolicy({ allowedHosts: ["*.example"] }),
+    publicResolver,
+  );
+  assert.equal(allowed.allowed, true);
+
+  const blocked = await evaluateTarget(
+    { url: targetUrl, challenge: challenge() },
+    createPolicy({ blockedHosts: ["merchant.example"] }),
+    publicResolver,
+  );
+  assert.ok(blocked.findings.some((item) => item.code === "HOST_BLOCKED"));
+});
+
+test("deduplicates DNS answers in the decision record", async () => {
+  const result = await evaluateTarget(
+    { url: targetUrl, challenge: challenge() },
+    defaultPolicy,
+    async () => ["8.8.8.8", "8.8.8.8"],
+  );
+  assert.deepEqual(result.resolvedAddresses, ["8.8.8.8"]);
 });

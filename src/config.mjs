@@ -1,4 +1,4 @@
-import { KITE_TESTNET_PIEUSD } from "./policy.mjs";
+import { createPolicy, KITE_TESTNET_PIEUSD } from "./policy.mjs";
 
 const ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
@@ -33,6 +33,7 @@ export function loadConfig(environment = process.env) {
     throw new Error("PAYMENT_AMOUNT must be a positive integer string");
   }
 
+  const csv = (value) => value?.split(",").map((item) => item.trim()).filter(Boolean) ?? [];
   return Object.freeze({
     port: integer(environment.PORT, 8787, "PORT", { max: 65_535 }),
     payTo,
@@ -48,5 +49,10 @@ export function loadConfig(environment = process.env) {
     ),
     paymentDisabled,
     publicBaseUrl: origin(environment.PUBLIC_BASE_URL),
+    policy: createPolicy({
+      maxAmount: BigInt(environment.MAX_TARGET_PAYMENT ?? "1000000"),
+      allowedHosts: csv(environment.ALLOWED_TARGET_HOSTS),
+      blockedHosts: csv(environment.BLOCKED_TARGET_HOSTS),
+    }),
   });
 }

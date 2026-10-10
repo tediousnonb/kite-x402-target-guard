@@ -98,7 +98,7 @@ async function handleEvaluate(request, response) {
   }
 
   try {
-    const result = await evaluateTarget(input);
+    const result = await evaluateTarget(input, config.policy);
     return sendJson(response, 200, {
       ok: true,
       mode: config.paymentDisabled ? "local-free" : "x402-paid",

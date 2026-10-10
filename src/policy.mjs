@@ -12,7 +12,26 @@ export const defaultPolicy = Object.freeze({
   maxTimeoutSeconds: 300,
   requireHttps: true,
   requireExactResource: true,
+  allowedHosts: [],
+  blockedHosts: [],
 });
+
+export function createPolicy(overrides = {}) {
+  return Object.freeze({
+    ...defaultPolicy,
+    ...overrides,
+    allowedNetworks: [...(overrides.allowedNetworks ?? defaultPolicy.allowedNetworks)],
+    allowedAssets: [...(overrides.allowedAssets ?? defaultPolicy.allowedAssets)],
+    allowedSchemes: [...(overrides.allowedSchemes ?? defaultPolicy.allowedSchemes)],
+    allowedHosts: [...(overrides.allowedHosts ?? defaultPolicy.allowedHosts)],
+    blockedHosts: [...(overrides.blockedHosts ?? defaultPolicy.blockedHosts)],
+  });
+}
+
+function hostMatches(hostname, rule) {
+  const normalized = rule.toLowerCase().replace(/^\*\./, "");
+  return hostname === normalized || hostname.endsWith(`.${normalized}`);
+}
 
 function finding(code, severity, message) {
   return { code, severity, message };
@@ -219,10 +238,19 @@ export async function evaluateTarget(
       finding("LOCAL_HOSTNAME", "block", "Local hostnames are forbidden"),
     );
   }
+  if (policy.blockedHosts.some((rule) => hostMatches(target.hostname, rule))) {
+    findings.push(finding("HOST_BLOCKED", "block", "Target host is explicitly blocked"));
+  }
+  if (
+    policy.allowedHosts.length > 0 &&
+    !policy.allowedHosts.some((rule) => hostMatches(target.hostname, rule))
+  ) {
+    findings.push(finding("HOST_NOT_ALLOWED", "block", "Target host is outside the allowlist"));
+  }
 
   let resolvedAddresses = [];
   try {
-    resolvedAddresses = await resolveAddresses(target.hostname, resolver);
+    resolvedAddresses = [...new Set(await resolveAddresses(target.hostname, resolver))];
     if (!resolvedAddresses.length) {
       findings.push(finding("DNS_EMPTY", "block", "Target has no DNS addresses"));
     }
