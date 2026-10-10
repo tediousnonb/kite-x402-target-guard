@@ -7,8 +7,10 @@ import {
 } from "./x402.mjs";
 import { loadConfig } from "./config.mjs";
 import { parseChallenge } from "./challenge.mjs";
+import { AuditLog } from "./audit.mjs";
 
 const config = loadConfig();
+const auditLog = new AuditLog();
 
 function sendJson(response, status, body) {
   response.writeHead(status, {
@@ -99,11 +101,17 @@ async function handleEvaluate(request, response) {
 
   try {
     const result = await evaluateTarget(input, config.policy);
+    const audit = auditLog.append({
+      result,
+      mode: config.paymentDisabled ? "local-free" : "x402-paid",
+      receipt,
+    });
     return sendJson(response, 200, {
       ok: true,
       mode: config.paymentDisabled ? "local-free" : "x402-paid",
       result,
       receipt,
+      auditId: audit.id,
     });
   } catch (error) {
     return sendJson(response, 400, {
@@ -119,6 +127,15 @@ export const server = createServer(async (request, response) => {
       ok: true,
       service: "kite-x402-target-guard",
       paymentMode: config.paymentDisabled ? "disabled" : "x402",
+      auditEntries: auditLog.size,
+    });
+  }
+  if (request.method === "GET" && url.pathname === "/v1/audits") {
+    const allowedValue = url.searchParams.get("allowed");
+    const allowed = allowedValue === null ? undefined : allowedValue === "true";
+    const limit = Number(url.searchParams.get("limit") ?? 50);
+    return sendJson(response, 200, {
+      entries: auditLog.list({ limit: Number.isFinite(limit) ? limit : 50, allowed }),
     });
   }
   if (request.method === "POST" && url.pathname === "/v1/evaluate") {
