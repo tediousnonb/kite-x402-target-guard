@@ -6,6 +6,24 @@ info:
 servers:
   - url: https://your-deployment.example
 paths:
+  /.well-known/x402:
+    get:
+      summary: Discover service capabilities and x402 payment configuration
+      responses:
+        "200":
+          description: Machine-readable service document
+  /v1/service:
+    get:
+      summary: Retrieve the service document
+      responses:
+        "200":
+          description: Machine-readable service document
+  /v1/audits:
+    get:
+      summary: List recent privacy-safe evaluation decisions
+      responses:
+        "200":
+          description: Recent audit entries
   /health:
     get:
       summary: Service health

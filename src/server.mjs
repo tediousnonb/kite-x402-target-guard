@@ -8,6 +8,7 @@ import {
 import { loadConfig } from "./config.mjs";
 import { parseChallenge } from "./challenge.mjs";
 import { AuditLog } from "./audit.mjs";
+import { serviceDocument } from "./service.mjs";
 
 const config = loadConfig();
 const auditLog = new AuditLog();
@@ -137,6 +138,12 @@ export const server = createServer(async (request, response) => {
     return sendJson(response, 200, {
       entries: auditLog.list({ limit: Number.isFinite(limit) ? limit : 50, allowed }),
     });
+  }
+  if (
+    request.method === "GET" &&
+    ["/.well-known/x402", "/v1/service"].includes(url.pathname)
+  ) {
+    return sendJson(response, 200, serviceDocument(config, publicResource(request)));
   }
   if (request.method === "POST" && url.pathname === "/v1/evaluate") {
     return handleEvaluate(request, response);
