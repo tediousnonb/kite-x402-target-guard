@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Kite x402 Target Guard
-  version: 0.1.0
+  version: 0.2.0
   description: Preflight security evaluation for x402 payment targets.
 servers:
   - url: https://your-deployment.example

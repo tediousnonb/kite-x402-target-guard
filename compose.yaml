@@ -1,0 +1,9 @@
+services:
+  target-guard:
+    build: .
+    ports:
+      - "8787:8787"
+    environment:
+      PORT: "8787"
+      PAYMENT_DISABLED: "true"
+    restart: unless-stopped

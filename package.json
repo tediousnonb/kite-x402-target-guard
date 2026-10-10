@@ -1,6 +1,6 @@
 {
   "name": "kite-x402-target-guard",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "A paid x402 preflight security evaluator for Kite Agent Passport services.",
