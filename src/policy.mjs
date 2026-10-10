@@ -241,9 +241,9 @@ export async function evaluateTarget(
     findings.push(finding("DNS_FAILURE", "block", "Target DNS resolution failed"));
   }
 
-  if (input.challenge?.x402Version !== 1) {
+  if (![1, 2].includes(input.challenge?.x402Version)) {
     findings.push(
-      finding("X402_VERSION", "block", "Only x402 version 1 is supported"),
+      finding("X402_VERSION", "block", "Only x402 versions 1 and 2 are supported"),
     );
   }
   const offer = selectOffer(input.challenge, policy);

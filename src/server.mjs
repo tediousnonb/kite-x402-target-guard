@@ -1,11 +1,12 @@
 import { createServer } from "node:http";
-import { evaluateTarget, KITE_TESTNET_PIEUSD } from "./policy.mjs";
+import { evaluateTarget } from "./policy.mjs";
 import {
   buildPaymentRequired,
   decodePaymentHeader,
   verifyAndSettle,
 } from "./x402.mjs";
 import { loadConfig } from "./config.mjs";
+import { parseChallenge } from "./challenge.mjs";
 
 const config = loadConfig();
 
@@ -77,9 +78,7 @@ async function handleEvaluate(request, response) {
     if (typeof input.url !== "string") {
       return sendJson(response, 400, { error: "url must be a string" });
     }
-    if (!input.challenge || typeof input.challenge !== "object") {
-      return sendJson(response, 400, { error: "challenge must be an object" });
-    }
+    input.challenge = parseChallenge(input.challenge, input.url);
   } catch (error) {
     return sendJson(response, 400, {
       error: error instanceof Error ? error.message : "Invalid request",

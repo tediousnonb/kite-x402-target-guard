@@ -8,7 +8,7 @@
     "dev": "PAYMENT_DISABLED=true node --watch src/server.mjs",
     "start": "node src/server.mjs",
     "test": "node --test",
-    "check": "node --check src/server.mjs && node --check src/policy.mjs && node --check src/x402.mjs"
+    "check": "node --check src/*.mjs"
   },
   "engines": {
     "node": ">=20"
