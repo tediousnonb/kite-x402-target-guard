@@ -9,6 +9,7 @@ import { loadConfig } from "./config.mjs";
 import { parseChallenge } from "./challenge.mjs";
 import { AuditLog } from "./audit.mjs";
 import { serviceDocument } from "./service.mjs";
+import { staticAsset } from "./static.mjs";
 
 const config = loadConfig();
 const auditLog = new AuditLog();
@@ -144,6 +145,18 @@ export const server = createServer(async (request, response) => {
     ["/.well-known/x402", "/v1/service"].includes(url.pathname)
   ) {
     return sendJson(response, 200, serviceDocument(config, publicResource(request)));
+  }
+  if (request.method === "GET") {
+    const asset = await staticAsset(url.pathname);
+    if (asset) {
+      response.writeHead(200, {
+        "content-type": asset.contentType,
+        "cache-control": url.pathname === "/" ? "no-cache" : "public, max-age=3600",
+        "x-content-type-options": "nosniff",
+        "content-security-policy": "default-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; frame-ancestors 'none'",
+      });
+      return response.end(asset.body);
+    }
   }
   if (request.method === "POST" && url.pathname === "/v1/evaluate") {
     return handleEvaluate(request, response);

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Kite x402 payment target security console" />
+    <title>Kite x402 Target Guard</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Target Guard home">
+        <span class="brand-mark">KG</span>
+        <span><strong>Target Guard</strong><small>Kite x402 Security</small></span>
+      </a>
+      <nav><a href="#console">Console</a><a href="#checks">Checks</a><a href="/.well-known/x402">Discovery</a></nav>
+      <span class="network"><i></i>Kite Testnet</span>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow">PAYMENT PREFLIGHT / POLICY ENGINE</div>
+        <h1>Inspect the target.<br /><em>Then authorize payment.</em></h1>
+        <p>Validate an x402 challenge, destination and payment policy before an autonomous agent puts funds at risk.</p>
+        <div class="hero-stats">
+          <div><strong>11</strong><span>security checks</span></div>
+          <div><strong>v1 + v2</strong><span>x402 support</span></div>
+          <div><strong>Fail closed</strong><span>default policy</span></div>
+        </div>
+      </section>
+
+      <section id="console" class="console-grid">
+        <article class="panel input-panel">
+          <div class="panel-heading"><div><span>01</span><h2>Evaluation request</h2></div><button id="sample-button" type="button">Load sample</button></div>
+          <label>Target URL<input id="target-url" type="url" spellcheck="false" placeholder="https://service.example/v1/resource" /></label>
+          <label>PAYMENT-REQUIRED challenge<textarea id="challenge" rows="14" spellcheck="false" placeholder="Paste JSON or a base64-encoded header"></textarea></label>
+          <button id="evaluate-button" class="primary" type="button"><span>Run security evaluation</span><b>→</b></button>
+          <p id="form-message" class="form-message" role="status"></p>
+        </article>
+
+        <article class="panel result-panel" aria-live="polite">
+          <div class="panel-heading"><div><span>02</span><h2>Decision</h2></div><span id="decision-badge" class="badge neutral">Awaiting input</span></div>
+          <div id="empty-result" class="empty-result"><div class="radar"><i></i><i></i><i></i></div><h3>No evaluation yet</h3><p>Submit a target and its x402 challenge to see a deterministic payment decision.</p></div>
+          <div id="result-content" class="result-content" hidden>
+            <div class="score-block"><span>Risk score</span><strong id="risk-score">0</strong><small>/ 100</small></div>
+            <dl class="target-meta"><div><dt>Host</dt><dd id="result-host">—</dd></div><div><dt>Network</dt><dd id="result-network">—</dd></div><div><dt>Amount</dt><dd id="result-amount">—</dd></div><div><dt>Resolved IPs</dt><dd id="result-addresses">—</dd></div></dl>
+            <h3>Policy findings</h3><ul id="finding-list" class="finding-list"></ul>
+          </div>
+        </article>
+      </section>
+
+      <section id="checks" class="checks-section">
+        <div><span class="eyebrow">DEFENSE IN DEPTH</span><h2>Built for adversarial payment targets</h2></div>
+        <div class="check-grid">
+          <article><b>01</b><h3>Network boundary</h3><p>Rejects private, loopback, link-local and reserved IPv4/IPv6 destinations.</p></article>
+          <article><b>02</b><h3>Resource binding</h3><p>Prevents a payment challenge from silently substituting another URL.</p></article>
+          <article><b>03</b><h3>Payment policy</h3><p>Validates Kite network, asset, amount, payee, timeout and x402 scheme.</p></article>
+          <article><b>04</b><h3>Decision trail</h3><p>Stores bounded, privacy-safe records without retaining full URLs or payloads.</p></article>
+        </div>
+      </section>
+    </main>
+    <footer><span>Kite x402 Target Guard</span><span>Original open-source implementation</span><a href="https://github.com/tediousnonb/kite-x402-target-guard">GitHub ↗</a></footer>
+  </body>
+</html>
