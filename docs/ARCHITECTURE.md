@@ -5,6 +5,8 @@ x402 service. It deliberately does not proxy the target request: the client
 retains custody of credentials and decides whether to proceed after receiving
 the evaluation.
 
+![Target Guard system architecture](assets/architecture.svg)
+
 ```text
 Agent / browser
       │ URL + PAYMENT-REQUIRED
@@ -23,6 +25,8 @@ Kite facilitator verify/settle
 ```
 
 ## Security boundaries
+
+![Four policy enforcement layers](assets/policy-checks.svg)
 
 - DNS answers are evaluated but not pinned. The eventual HTTP client must
   resolve again safely and bind the connection to the approved address.

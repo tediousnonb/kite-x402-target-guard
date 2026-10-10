@@ -6,6 +6,15 @@ repository includes a responsive web console, machine-readable discovery,
 Kite payment handling, privacy-safe decision history, metrics and a complete
 test suite.
 
+![Kite x402 Target Guard security console](docs/assets/console-desktop.png)
+
+The console is responsive and can be used from a desktop workstation or a
+mobile operations view.
+
+<p align="center">
+  <img src="docs/assets/console-mobile.png" alt="Target Guard mobile console" width="300" />
+</p>
+
 ## Product capabilities
 
 - Interactive browser console for JSON and base64 `PAYMENT-REQUIRED` data.
@@ -18,6 +27,8 @@ test suite.
 - Machine discovery at `/.well-known/x402` and `/v1/service`.
 - Bounded audit history, request tracing and Prometheus metrics.
 - Dependency-free Node.js runtime, Docker image and end-to-end tests.
+
+![Target Guard policy layers](docs/assets/policy-checks.svg)
 
 ## Quick start
 
