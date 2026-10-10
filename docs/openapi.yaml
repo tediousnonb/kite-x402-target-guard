@@ -1,0 +1,46 @@
+openapi: 3.1.0
+info:
+  title: Kite x402 Target Guard
+  version: 0.1.0
+  description: Preflight security evaluation for x402 payment targets.
+servers:
+  - url: https://your-deployment.example
+paths:
+  /health:
+    get:
+      summary: Service health
+      responses:
+        "200":
+          description: Healthy
+  /v1/evaluate:
+    post:
+      summary: Evaluate an x402 target and payment challenge
+      parameters:
+        - in: header
+          name: X-PAYMENT
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url, challenge]
+              properties:
+                url:
+                  type: string
+                  format: uri
+                challenge:
+                  type: object
+                  additionalProperties: true
+      responses:
+        "200":
+          description: Evaluation result
+        "400":
+          description: Invalid request
+        "402":
+          description: Payment required or invalid
+        "503":
+          description: Payment configuration error

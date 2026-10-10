@@ -1,0 +1,17 @@
+{
+  "name": "kite-x402-target-guard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A paid x402 preflight security evaluator for Kite Agent Passport services.",
+  "scripts": {
+    "dev": "PAYMENT_DISABLED=true node --watch src/server.mjs",
+    "start": "node src/server.mjs",
+    "test": "node --test",
+    "check": "node --check src/server.mjs && node --check src/policy.mjs && node --check src/x402.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

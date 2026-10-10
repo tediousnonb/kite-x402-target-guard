@@ -1,0 +1,18 @@
+{
+  "url": "https://merchant.example/v1/data?city=shanghai",
+  "challenge": {
+    "x402Version": 1,
+    "error": "X-PAYMENT header is required",
+    "accepts": [
+      {
+        "scheme": "gokite-aa",
+        "network": "kite-testnet",
+        "maxAmountRequired": "10000",
+        "resource": "https://merchant.example/v1/data?city=shanghai",
+        "payTo": "0x1111111111111111111111111111111111111111",
+        "asset": "0x0fF5393387ad2f9f691FD6Fd28e07E3969e27e63",
+        "maxTimeoutSeconds": 300
+      }
+    ]
+  }
+}
