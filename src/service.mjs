@@ -31,6 +31,7 @@ export function serviceDocument(config, resource) {
       health: "/health",
       audits: "/v1/audits",
       openapi: "/openapi.yaml",
+      metrics: "/metrics",
     },
   };
 }

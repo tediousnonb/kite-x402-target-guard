@@ -10,9 +10,12 @@ import { parseChallenge } from "./challenge.mjs";
 import { AuditLog } from "./audit.mjs";
 import { serviceDocument } from "./service.mjs";
 import { staticAsset } from "./static.mjs";
+import { randomUUID } from "node:crypto";
+import { Telemetry } from "./telemetry.mjs";
 
 const config = loadConfig();
 const auditLog = new AuditLog();
+const telemetry = new Telemetry();
 
 function sendJson(response, status, body) {
   response.writeHead(status, {
@@ -123,6 +126,23 @@ async function handleEvaluate(request, response) {
 }
 
 export const server = createServer(async (request, response) => {
+  const startedAt = performance.now();
+  const requestId = request.headers["x-request-id"]?.toString().slice(0, 128) || randomUUID();
+  response.setHeader("x-request-id", requestId);
+  response.setHeader("x-content-type-options", "nosniff");
+  response.setHeader("referrer-policy", "no-referrer");
+  response.once("finish", () => {
+    const durationMs = performance.now() - startedAt;
+    telemetry.observe(response.statusCode, durationMs);
+    console.log(JSON.stringify({
+      level: "info",
+      requestId,
+      method: request.method,
+      path: request.url?.split("?")[0],
+      status: response.statusCode,
+      durationMs: Number(durationMs.toFixed(2)),
+    }));
+  });
   const url = requestUrl(request);
   if (request.method === "GET" && url.pathname === "/health") {
     return sendJson(response, 200, {
@@ -139,6 +159,14 @@ export const server = createServer(async (request, response) => {
     return sendJson(response, 200, {
       entries: auditLog.list({ limit: Number.isFinite(limit) ? limit : 50, allowed }),
     });
+  }
+  if (request.method === "GET" && url.pathname === "/metrics") {
+    const metrics = telemetry.prometheus();
+    response.writeHead(200, {
+      "content-type": "text/plain; version=0.0.4; charset=utf-8",
+      "cache-control": "no-store",
+    });
+    return response.end(metrics);
   }
   if (
     request.method === "GET" &&
