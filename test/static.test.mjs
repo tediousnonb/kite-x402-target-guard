@@ -11,3 +11,9 @@ test("serves the console shell with a correct content type", async () => {
 test("does not expose files outside the public directory", async () => {
   assert.equal(await staticAsset("/../../package.json"), null);
 });
+
+test("ships a browser client for live evaluations", async () => {
+  const asset = await staticAsset("/app.js");
+  assert.match(asset.contentType, /javascript/);
+  assert.match(asset.body.toString(), /\/v1\/evaluate/);
+});

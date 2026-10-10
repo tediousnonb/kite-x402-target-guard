@@ -6,6 +6,7 @@
     <meta name="description" content="Kite x402 payment target security console" />
     <title>Kite x402 Target Guard</title>
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/history.css" />
   </head>
   <body>
     <header class="topbar">
@@ -58,7 +59,12 @@
           <article><b>04</b><h3>Decision trail</h3><p>Stores bounded, privacy-safe records without retaining full URLs or payloads.</p></article>
         </div>
       </section>
+      <section class="history-section">
+        <div class="history-heading"><div><span class="eyebrow">LOCAL SERVICE ACTIVITY</span><h2>Recent decisions</h2></div><button id="refresh-history" type="button">Refresh history</button></div>
+        <div id="history-list" class="history-list"><p>No decisions recorded in this process yet.</p></div>
+      </section>
     </main>
     <footer><span>Kite x402 Target Guard</span><span>Original open-source implementation</span><a href="https://github.com/tediousnonb/kite-x402-target-guard">GitHub ↗</a></footer>
+    <script type="module" src="/app.js"></script>
   </body>
 </html>
