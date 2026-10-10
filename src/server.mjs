@@ -5,19 +5,9 @@ import {
   decodePaymentHeader,
   verifyAndSettle,
 } from "./x402.mjs";
+import { loadConfig } from "./config.mjs";
 
-const config = {
-  port: Number(process.env.PORT ?? 8787),
-  payTo: process.env.PAYEE_WALLET ?? "0x0000000000000000000000000000000000000000",
-  asset: process.env.PAYMENT_ASSET ?? KITE_TESTNET_PIEUSD,
-  amount: process.env.PAYMENT_AMOUNT ?? "10000",
-  network: process.env.PASSPORT_NETWORK ?? "kite-testnet",
-  facilitatorUrl:
-    process.env.FACILITATOR_URL ?? "https://facilitator.pieverse.io",
-  facilitatorTimeoutMs: Number(process.env.FACILITATOR_TIMEOUT_MS ?? 10_000),
-  paymentDisabled: process.env.PAYMENT_DISABLED === "true",
-  publicBaseUrl: process.env.PUBLIC_BASE_URL,
-};
+const config = loadConfig();
 
 function sendJson(response, status, body) {
   response.writeHead(status, {
